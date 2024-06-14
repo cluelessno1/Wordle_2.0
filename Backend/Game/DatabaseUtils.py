@@ -25,9 +25,3 @@ class DatabaseUtils:
 
         # Return True if the word is present, False otherwise
         return word_entry is not None
-
-# Create an instance of the class
-db_utils = DatabaseUtils()
-
-# Use the method
-print(db_utils.is_word_present_in_AllEnglishWordsTable("Hello"))
