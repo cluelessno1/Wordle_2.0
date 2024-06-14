@@ -1,11 +1,15 @@
 import json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from dotenv import dotenv_values
+
+# Load the data from the .env file
+config = dotenv_values(".env")
 
 JSON_FILE_PATH = '../words_dictionary.json'
-DB_NAME = 'Wordle2DB'
-TABLE_NAME = 'AllEnglishWordsTable'
-MONGODB_CONNECTION_STRING = ''
+DB_NAME = config['WORDLE_2_PROJECT_DB_NAME']
+TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
+MONGODB_CONNECTION_STRING = config['MONGODB_CONNECTION_STRING']
 
 # Load data from the JSON file
 with open(JSON_FILE_PATH, 'r') as file:
