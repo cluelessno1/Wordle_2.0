@@ -1,5 +1,7 @@
 import random
 
+from DatabaseUtils import DatabaseUtils
+
 class WordleGame:
     def __init__(self, word_list, mode='medium'):
         self.word_list = word_list
@@ -7,12 +9,16 @@ class WordleGame:
         self.guesses = []
         self.mode = mode
         self.grayed_out_letters = set()
+        self.dbUtils = DatabaseUtils()
 
     def guess_word(self, guess):
 
         guessLengthValidationResult, guessLengthValidationMessage = self.guessLengthValidation(guess)
         if not guessLengthValidationResult:
             return False, guessLengthValidationMessage
+        
+        if not self.isAValidEnglishWord(guess):
+            return False, "{0} is not a valid English word.".format(guess)
         
         if self.mode == 'hard' and any(letter in self.grayed_out_letters for letter in guess):
             return False, "You can't reuse the letters that have been grayed out in HARD mode."
@@ -43,7 +49,10 @@ class WordleGame:
             return (True, '') if len(guess) <= len(self.target_word) else (False, "The length of the guess word can't be greater than {0}".format(len(self.target_word)))
         elif self.mode == 'medium' or self.mode == 'hard':
             return (True, '') if len(guess) == len(self.target_word) else (False, "The length of the guess word has to be equal to {0}".format(len(self.target_word)))
-    
+
+    def isAValidEnglishWord(self, guess):
+        return self.dbUtils.is_word_present_in_AllEnglishWordsTable(guess)
+         
 
 def main():
     # List of words for the game
