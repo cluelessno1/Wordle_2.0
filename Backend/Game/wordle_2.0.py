@@ -3,15 +3,22 @@ import random
 from DatabaseUtils import DatabaseUtils
 
 class WordleGame:
-    def __init__(self, word_list, mode='medium'):
+    def __init__(self, word_list, mode='medium', max_tries=10):
         self.word_list = word_list
         self.target_word = random.choice(self.word_list)
         self.guesses = []
         self.mode = mode
         self.grayed_out_letters = set()
         self.dbUtils = DatabaseUtils()
+        self.currentTries = 0
+        self.max_tries = max_tries
+        self.targetWordLen = len(self.target_word)
 
     def guess_word(self, guess):
+        self.currentTries += 1
+
+        if self.currentTries > self.max_tries:
+            return False, "You've reached the maximum number of tries."
 
         guessLengthValidationResult, guessLengthValidationMessage = self.guessLengthValidation(guess)
         if not guessLengthValidationResult:
@@ -32,6 +39,10 @@ class WordleGame:
         for g, t in zip(guess, self.target_word):
             if g == t:
                 result.append(('green', g))
+                for i, (colour, letter) in enumerate(result):
+                    if letter == g and colour == 'yellow':
+                        result[i] = (g, 'grey')
+                        break
             elif g in self.target_word and all(g != r[1] for r in result):
                 result.append(('yellow', g))
             else:
@@ -52,6 +63,12 @@ class WordleGame:
 
     def isAValidEnglishWord(self, guess):
         return self.dbUtils.is_word_present_in_AllEnglishWordsTable(guess)
+    
+    def triesLeft(self):
+        return self.max_tries - self.currentTries
+    
+    def lengthOfTargetWord(self):
+        return self.targetWordLen
          
 
 def main():
@@ -64,8 +81,12 @@ def main():
     # Create a new game
     game = WordleGame(word_list, mode)
 
+    print("Length of the Target Word is {0}".format(game.lengthOfTargetWord()))
+
     # Game loop
     while True:
+        print("Tries left : {0}".format(game.triesLeft()))
+
         # Get a guess from the user
         guess = input("Enter your guess: ")
 
@@ -76,7 +97,11 @@ def main():
         print(result[1])
 
         # Check if the game is over
-        if result == "Congratulations! You've guessed the word.":
+        if result[1] == "You've reached the maximum number of tries.":
+            break
+
+        # Check if the game is over
+        if result[1] == "Congratulations! You've guessed the word.":
             break
 
 if __name__ == "__main__":
