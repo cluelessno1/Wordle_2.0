@@ -20,6 +20,8 @@ class DatabaseUtils:
         self.ALL_ENGLISH_WORDS_TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
         self.WORD_OF_THE_DAY_TABLE_NAME = config['WORD_OF_THE_DAY_TABLE_NAME']
         self.MONGODB_CONNECTION_STRING = config['MONGODB_CONNECTION_STRING']
+        self.client = self.connect_to_MongoDB()
+
         # Log the initialization of the database utils
         logging.info('Initialized DatabaseUtils')
 
@@ -38,11 +40,8 @@ class DatabaseUtils:
         # Log the query attempt
         logging.info(f'Querying for word: {word}')
 
-        # Get client
-        client = self.connect_to_MongoDB()
-
         # Access the database
-        db = client[self.DB_NAME]
+        db = self.client[self.DB_NAME]
 
         # Access the collection
         collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
@@ -60,11 +59,8 @@ class DatabaseUtils:
         return word_entry is not None
     
     def get_word_from_id_from_AllEnglishWordsTable(self, id):
-        # Get client
-        client = self.connect_to_MongoDB()
-
         # Access the database
-        db = client[self.DB_NAME]
+        db = self.client[self.DB_NAME]
 
         # Access the collection
         collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
@@ -79,11 +75,8 @@ class DatabaseUtils:
         return word_entry['word'] if word_entry else None
     
     def get_word_of_the_day(self, date):
-        # Get client
-        client = self.connect_to_MongoDB()
-
         # Access the database
-        db = client[self.DB_NAME]
+        db = self.client[self.DB_NAME]
 
         # Access the collection
         collection = db[self.WORD_OF_THE_DAY_TABLE_NAME]
