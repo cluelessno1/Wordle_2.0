@@ -102,6 +102,8 @@ def main():
         # Make a guess in the game
         result = game.guess_word(guess)
 
+        # Print the result
+        print(result[1])
         # Log the guess and result
         logging.info(f'Guess: {guess}, Result: {result[1]}')
 
