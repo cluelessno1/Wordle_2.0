@@ -72,10 +72,20 @@ class WordleGame:
     def lengthOfTargetWord(self):
         return self.targetWordLen
          
+def validate_mode(mode):
+    if mode not in ['easy', 'medium', 'hard']:
+        raise ValueError(f"Invalid game mode {mode} selected.")
+    else:
+        logging.info(f"{mode} game mode selected.")
 
 def main():
-    # Ask the user for the game mode
-    mode = input("Enter game mode (easy, medium, hard): ")
+    try:
+        # Ask the user for the game mode
+        mode = input("Enter game mode (easy, medium, hard): ")
+        validate_mode(mode)
+    except ValueError as e:
+        logging.exception(str(e))
+        raise e
 
     # Get the current date
     current_date = datetime.now()
