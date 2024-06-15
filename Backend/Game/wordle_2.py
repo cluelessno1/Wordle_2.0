@@ -12,8 +12,9 @@ class WordleGame:
         self.currentTries = 0
         self.max_tries = max_tries
         self.target_word = self.dbUtils.get_word_of_the_day(date)
-        logging.info(f'Game started in {self.mode} mode with target word: {self.target_word}')
         self.targetWordLen = len(self.target_word)
+
+        logging.info(f'Game started in {self.mode} mode with target word: {self.target_word}')
 
     def guess_word(self, guess):
         self.currentTries += 1
@@ -73,9 +74,6 @@ class WordleGame:
          
 
 def main():
-    # List of words for the game
-    # word_list = ["apple", "banana", "cherry", "date", "elderberry"]
-
     # Ask the user for the game mode
     mode = input("Enter game mode (easy, medium, hard): ")
 

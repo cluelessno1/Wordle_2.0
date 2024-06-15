@@ -26,68 +26,98 @@ class DatabaseUtils:
         logging.info('Initialized DatabaseUtils')
 
     def connect_to_MongoDB(self):
-        # Log the attempt to connect to MongoDB
-        logging.info('Connecting to MongoDB')
+        try:
+            # Log the attempt to connect to MongoDB
+            logging.info('Connecting to MongoDB')
 
-        # Create a connection to MongoDB
-        client = MongoClient(self.MONGODB_CONNECTION_STRING)
+            # Create a connection to MongoDB
+            client = MongoClient(self.MONGODB_CONNECTION_STRING)
 
-        # Log successful connection to MongoDB
-        logging.info('Connected to MongoDB')
-        return client
+            # Log successful connection to MongoDB
+            logging.info('Connected to MongoDB')
+            return client
+        except Exception as e:
+            logging.error(f"Failed to connect to MongoDB: {e}")
+            return None
 
     def is_word_present_in_AllEnglishWordsTable(self, word):
-        # Log the query attempt
-        logging.info(f'Querying for word: {word}')
+        try:
+            # Log the query attempt
+            logging.info(f'Accessing {self.ALL_ENGLISH_WORDS_TABLE_NAME} to query for word: {word}')
 
-        # Access the database
-        db = self.client[self.DB_NAME]
+            # Access the database
+            db = self.client[self.DB_NAME]
 
-        # Access the collection
-        collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
+            # Access the collection
+            collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
 
-        # Check if the lowercase word is in the collection
-        word_entry = collection.find_one({'word': word.lower()})
+            # Check if the lowercase word is in the collection
+            word_entry = collection.find_one({'word': word.lower()})
 
-        # Log the result of the query
-        if word_entry:
-            logging.info(f'Word found: {word}')
-        else:
-            logging.info(f'Word not found: {word}')
-
-        # Return True if the word is present, False otherwise
-        return word_entry is not None
+            # Log the result of the query
+            if word_entry:
+                logging.info(f'Word found: {word}')
+                return True
+            else:
+                logging.info(f'Word not found: {word}')
+                return False
+        except Exception as e:
+            logging.error(f"An error occurred: {e}")
+            return False
     
-    def get_word_from_id_from_AllEnglishWordsTable(self, id):
-        # Access the database
-        db = self.client[self.DB_NAME]
+    def get_word_from_id_from_AllEnglishWordsTable(self, wordId):
+        try:
+            # Log the attempt to access the database
+            logging.info(f'Accessing {self.ALL_ENGLISH_WORDS_TABLE_NAME} with id: {wordId}')
 
-        # Access the collection
-        collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
+            # Access the database
+            db = self.client[self.DB_NAME]
 
-        # Convert string id to ObjectId       
-        object_id = ObjectId(id)
+            # Access the collection
+            collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
 
-        # Find the document by its '_id'
-        word_entry = collection.find_one({'_id': object_id})
+            # Convert string id to ObjectId       
+            object_id = ObjectId(wordId)
 
-        # Return the word entry if present, None otherwise
-        return word_entry['word'] if word_entry else None
+            # Find the document by its '_id'
+            word_entry = collection.find_one({'_id': object_id})
+
+            # Log the result of the query
+            if word_entry:
+                logging.info(f'Word entry found for id {wordId}: {word_entry["word"]}')
+                return word_entry['word']
+            else:
+                logging.info(f'No word entry found for id {wordId}')
+                return None
+        except Exception as e:
+            logging.error(f"An error occurred while getting word from id: {e}")
+            return None
     
     def get_word_of_the_day(self, date):
-        # Access the database
-        db = self.client[self.DB_NAME]
+        try:
+            # Log the attempt to access the database
+            logging.info(f'Accessing {self.WORD_OF_THE_DAY_TABLE_NAME} database for word of the day on {date}')
 
-        # Access the collection
-        collection = db[self.WORD_OF_THE_DAY_TABLE_NAME]
+            # Access the database
+            db = self.client[self.DB_NAME]
 
-        # Find the document by its 'date'
-        word_of_the_day_document = collection.find_one({'date': date})
+            # Access the collection
+            collection = db[self.WORD_OF_THE_DAY_TABLE_NAME]
 
-        # Check if a document was found
-        if word_of_the_day_document:
-            # Extract ObjectId as a string
-            word_id = str(word_of_the_day_document['wordId']['$oid'])
-            return self.get_word_from_id_from_AllEnglishWordsTable(word_id)
-        else:
+            # Find the document by its 'date'
+            word_of_the_day_document = collection.find_one({'date': date})
+
+            # Check if a document was found
+            if word_of_the_day_document:
+                # Extract ObjectId as a string
+                word_id = str(word_of_the_day_document['wordId']['$oid'])
+                # Log the found document
+                logging.info(f'Document found for date {date}: {word_id}')
+                return self.get_word_from_id_from_AllEnglishWordsTable(word_id)
+            else:
+                # Log no document found
+                logging.info(f'No document found for date {date}')
+                return None
+        except Exception as e:
+            logging.error(f"An error occurred while getting word of the day: {e}")
             return None

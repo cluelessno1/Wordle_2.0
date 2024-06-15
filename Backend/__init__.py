@@ -20,4 +20,4 @@ if logging_level is not None:
 else:
     logging.warning('Invalid LOGGING_LEVEL value in .env file')
 
-logging.info("Starting a new game session. All ther best!!!")
+logging.info("Starting a new game session. All the best!!!")
