@@ -1,10 +1,18 @@
+import os
+
 from pymongo import MongoClient
 from dotenv import dotenv_values
 
 class DatabaseUtils:
     def __init__(self):
+        # Get the directory of the current script
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct the relative path to the .env file
+        env_path = os.path.join(current_dir, '..', '.env')
+
         # Load the data from the .env file
-        config = dotenv_values("C:\\Wordle_2.0\\Backend\\.env")
+        config = dotenv_values(env_path)
 
         self.DB_NAME = config['WORDLE_2_PROJECT_DB_NAME']
         self.ALL_ENGLISH_WORDS_TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
