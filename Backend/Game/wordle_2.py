@@ -1,6 +1,6 @@
 import random
 
-from DatabaseUtils import DatabaseUtils
+from Backend.Database.DatabaseUtils import DatabaseUtils
 
 class WordleGame:
     def __init__(self, word_list, mode='medium', max_tries=10):
