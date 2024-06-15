@@ -1,17 +1,17 @@
-import random
+from datetime import datetime
 
 from Backend.Database.DatabaseUtils import DatabaseUtils
 
 class WordleGame:
-    def __init__(self, word_list, mode='medium', max_tries=10):
-        self.word_list = word_list
-        self.target_word = random.choice(self.word_list)
+    def __init__(self, mode='medium', max_tries=10, date='2024-06-14'):
         self.guesses = []
         self.mode = mode
         self.grayed_out_letters = set()
         self.dbUtils = DatabaseUtils()
         self.currentTries = 0
         self.max_tries = max_tries
+        self.target_word = self.dbUtils.get_word_of_the_day(date)
+        print(self.target_word)
         self.targetWordLen = len(self.target_word)
 
     def guess_word(self, guess):
@@ -73,13 +73,21 @@ class WordleGame:
 
 def main():
     # List of words for the game
-    word_list = ["apple", "banana", "cherry", "date", "elderberry"]
+    # word_list = ["apple", "banana", "cherry", "date", "elderberry"]
 
     # Ask the user for the game mode
     mode = input("Enter game mode (easy, medium, hard): ")
 
+    # Get the current date
+    current_date = datetime.now()
+
+    # Format the date as 'YYYY-MM-DD'
+    formatted_date = current_date.strftime('%Y-%m-%d')
+
+    print(formatted_date)
+
     # Create a new game
-    game = WordleGame(word_list, mode)
+    game = WordleGame(mode=mode, date =formatted_date)
 
     print("Length of the Target Word is {0}".format(game.lengthOfTargetWord()))
 

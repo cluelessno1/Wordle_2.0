@@ -2,6 +2,7 @@ import os
 
 from pymongo import MongoClient
 from dotenv import dotenv_values
+from bson.objectid import ObjectId
 
 class DatabaseUtils:
     def __init__(self):
@@ -16,11 +17,17 @@ class DatabaseUtils:
 
         self.DB_NAME = config['WORDLE_2_PROJECT_DB_NAME']
         self.ALL_ENGLISH_WORDS_TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
+        self.WORD_OF_THE_DAY_TABLE_NAME = config['WORD_OF_THE_DAY_TABLE_NAME']
         self.MONGODB_CONNECTION_STRING = config['MONGODB_CONNECTION_STRING']
 
-    def is_word_present_in_AllEnglishWordsTable(self, word):
+    def connect_to_MongoDB(self):
         # Create a connection to MongoDB
         client = MongoClient(self.MONGODB_CONNECTION_STRING)
+        return client
+
+    def is_word_present_in_AllEnglishWordsTable(self, word):
+        # Get client
+        client = self.connect_to_MongoDB()
 
         # Access the database
         db = client[self.DB_NAME]
@@ -33,3 +40,43 @@ class DatabaseUtils:
 
         # Return True if the word is present, False otherwise
         return word_entry is not None
+    
+    def get_word_from_id_from_AllEnglishWordsTable(self, id):
+        # Get client
+        client = self.connect_to_MongoDB()
+
+        # Access the database
+        db = client[self.DB_NAME]
+
+        # Access the collection
+        collection = db[self.ALL_ENGLISH_WORDS_TABLE_NAME]
+
+        # Convert string id to ObjectId       
+        object_id = ObjectId(id)
+
+        # Find the document by its '_id'
+        word_entry = collection.find_one({'_id': object_id})
+
+        # Return the word entry if present, None otherwise
+        return word_entry['word'] if word_entry else None
+    
+    def get_word_of_the_day(self, date):
+        # Get client
+        client = self.connect_to_MongoDB()
+
+        # Access the database
+        db = client[self.DB_NAME]
+
+        # Access the collection
+        collection = db[self.WORD_OF_THE_DAY_TABLE_NAME]
+
+        # Find the document by its 'date'
+        word_of_the_day_document = collection.find_one({'date': date})
+
+        # Check if a document was found
+        if word_of_the_day_document:
+            # Extract ObjectId as a string
+            word_id = str(word_of_the_day_document['wordId']['$oid'])
+            return self.get_word_from_id_from_AllEnglishWordsTable(word_id)
+        else:
+            return None
