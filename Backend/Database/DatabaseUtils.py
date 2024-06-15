@@ -7,19 +7,27 @@ from bson.objectid import ObjectId
 
 class DatabaseUtils:
     def __init__(self):
-        # Get the directory of the current script
-        current_dir = os.path.dirname(os.path.abspath(__file__))
+        try:
+            # Get the directory of the current script
+            current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Construct the relative path to the .env file
-        env_path = os.path.join(current_dir, '..', '.env')
+            # Construct the relative path to the .env file
+            env_path = os.path.join(current_dir, '..', '.env')
 
-        # Load the data from the .env file
-        config = dotenv_values(env_path)
+            # Load the data from the .env file
+            config = dotenv_values(env_path)
 
-        self.DB_NAME = config['WORDLE_2_PROJECT_DB_NAME']
-        self.ALL_ENGLISH_WORDS_TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
-        self.WORD_OF_THE_DAY_TABLE_NAME = config['WORD_OF_THE_DAY_TABLE_NAME']
-        self.MONGODB_CONNECTION_STRING = config['MONGODB_CONNECTION_STRING']
+            self.DB_NAME = config['WORDLE_2_PROJECT_DB_NAME']
+            self.ALL_ENGLISH_WORDS_TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
+            self.WORD_OF_THE_DAY_TABLE_NAME = config['WORD_OF_THE_DAY_TABLE_NAME']
+            self.MONGODB_CONNECTION_STRING = config['MONGODB_CONNECTION_STRING']
+            
+            # Log successful loading of configuration
+            logging.info('Successfully loaded configuration from .env file')
+        except Exception as e:
+            logging.error(f"Failed to load configuration from .env file: {e}")
+            raise e  # Re-raise exception after logging
+
         self.client = self.connect_to_MongoDB()
 
         # Log the initialization of the database utils
