@@ -19,3 +19,5 @@ if logging_level is not None:
     logging.basicConfig(filename='wordle_2_backend.log', filemode='a', level=logging.INFO, format='%(asctime)s - %(filename)s - %(levelname)s - %(message)s')
 else:
     logging.warning('Invalid LOGGING_LEVEL value in .env file')
+
+logging.info("Starting a new game session. All ther best!!!")
