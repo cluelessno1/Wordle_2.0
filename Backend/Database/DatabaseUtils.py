@@ -1,4 +1,5 @@
 import os
+import logging
 
 from pymongo import MongoClient
 from dotenv import dotenv_values
@@ -19,13 +20,24 @@ class DatabaseUtils:
         self.ALL_ENGLISH_WORDS_TABLE_NAME = config['ALL_ENGLISH_WORDS_TABLE_NAME']
         self.WORD_OF_THE_DAY_TABLE_NAME = config['WORD_OF_THE_DAY_TABLE_NAME']
         self.MONGODB_CONNECTION_STRING = config['MONGODB_CONNECTION_STRING']
+        # Log the initialization of the database utils
+        logging.info('Initialized DatabaseUtils')
 
     def connect_to_MongoDB(self):
+        # Log the attempt to connect to MongoDB
+        logging.info('Connecting to MongoDB')
+
         # Create a connection to MongoDB
         client = MongoClient(self.MONGODB_CONNECTION_STRING)
+
+        # Log successful connection to MongoDB
+        logging.info('Connected to MongoDB')
         return client
 
     def is_word_present_in_AllEnglishWordsTable(self, word):
+        # Log the query attempt
+        logging.info(f'Querying for word: {word}')
+
         # Get client
         client = self.connect_to_MongoDB()
 
@@ -37,6 +49,12 @@ class DatabaseUtils:
 
         # Check if the lowercase word is in the collection
         word_entry = collection.find_one({'word': word.lower()})
+
+        # Log the result of the query
+        if word_entry:
+            logging.info(f'Word found: {word}')
+        else:
+            logging.info(f'Word not found: {word}')
 
         # Return True if the word is present, False otherwise
         return word_entry is not None

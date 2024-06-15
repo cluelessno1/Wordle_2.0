@@ -3,9 +3,6 @@ from datetime import datetime
 
 from Backend.Database.DatabaseUtils import DatabaseUtils
 
-# Configure the logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 class WordleGame:
     def __init__(self, mode='medium', max_tries=10, date='2024-06-14'):
         self.guesses = []
