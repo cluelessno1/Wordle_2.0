@@ -1,6 +1,10 @@
+import logging
 from datetime import datetime
 
 from Backend.Database.DatabaseUtils import DatabaseUtils
+
+# Configure the logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class WordleGame:
     def __init__(self, mode='medium', max_tries=10, date='2024-06-14'):
@@ -11,7 +15,7 @@ class WordleGame:
         self.currentTries = 0
         self.max_tries = max_tries
         self.target_word = self.dbUtils.get_word_of_the_day(date)
-        print(self.target_word)
+        logging.info(f'Game started in {self.mode} mode with target word: {self.target_word}')
         self.targetWordLen = len(self.target_word)
 
     def guess_word(self, guess):
@@ -101,15 +105,17 @@ def main():
         # Make a guess in the game
         result = game.guess_word(guess)
 
-        # Print the result
-        print(result[1])
+        # Log the guess and result
+        logging.info(f'Guess: {guess}, Result: {result[1]}')
 
         # Check if the game is over
         if result[1] == "You've reached the maximum number of tries.":
+            logging.info('Game over - maximum number of tries reached.')
             break
 
         # Check if the game is over
         if result[1] == "Congratulations! You've guessed the word.":
+            logging.info('Game won - correct word guessed.')
             break
 
 if __name__ == "__main__":
